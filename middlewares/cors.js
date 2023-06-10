@@ -1,7 +1,7 @@
 // Массив доменов, с которых разрешены кросс-доменные запросы
 const allowedCors = [
-  'https://alolelyc.nomoredomains.monster',
-  'http://alolelyc.nomoredomains.monster',
+  'https://alolelyc.movies.nomoredomains.rocks',
+  'http://alolelyc.movies.nomoredomains.rocks',
   'http://localhost:3000',
   'https://localhost:3000',
 
