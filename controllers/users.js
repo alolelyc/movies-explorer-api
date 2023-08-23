@@ -1,5 +1,5 @@
 const {
-  ValidationError, CastError,
+  ValidationError,
 } = require('mongoose').Error;
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -32,7 +32,23 @@ module.exports.createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then((user) => res.status(ERR_STATUS_CREATED_201).send(user))
+    .then((user) => {
+      // создадим токен
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
+      // отправим токен, браузер сохранит его в куках
+      res.cookie('jwt', token, {
+        // token - наш JWT токен, который мы отправляем
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true
+
+      });
+
+      res.status(ERR_STATUS_CREATED_201).send(user)
+    }
+    )
+
     .catch((err) => {
       if (err.code === 11000) {
         next(new ConflictError('Пользователь с таким e-mail уже существует'));
@@ -59,10 +75,10 @@ module.exports.login = (req, res, next) => {
         maxAge: 3600000 * 24 * 7,
         httpOnly: true,
         sameSite: 'none',
+        secure: true
 
-      })
-        // отправим токен пользователю
-        .send({ token });
+      });
+      res.send({ massage: 'Вы авторизованы' });
     })
     .catch(next);
 };
@@ -90,10 +106,6 @@ module.exports.updateProfile = (req, res, next) => {
       }
       if (err instanceof ValidationError) {
         next(new BadRequestError('Некорректные данные при обновлении пользователя'));
-        return;
-      }
-      if (err instanceof CastError) {
-        next(new BadRequestError('Id пользователя передан некорректно'));
       } else {
         next(err);
       }

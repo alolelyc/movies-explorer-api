@@ -3,7 +3,11 @@ const allowedCors = [
   'https://alolelyc.movies.nomoredomains.rocks',
   'http://alolelyc.movies.nomoredomains.rocks',
   'http://localhost:3000',
+  'http://localhost:3001',
   'https://localhost:3000',
+  'https://localhost:3001',
+  'http://localhost:3002',
+  'https://localhost:3002',
 
 ];
 
